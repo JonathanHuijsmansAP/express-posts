@@ -32,5 +32,19 @@ app.get('/search', (req, res) => {
 
 // Find all comments for post
 app.post('/search', (req, res) => {
-	
+	request('http://jsonplaceholder.typicode.com/posts', function (error, response, body) {
+		var postsarray = JSON.parse(body);
+		var query = req.body.title;
+		var postid;
+		postsarray.forEach(function(el){
+			if (el.title == query) {
+				postid = el.id;
+			}
+		});
+		
+		request('http://jsonplaceholder.typicode.com/post/' + postid + '/comments', function (error2, response2, body2){
+			var commentsarray = JSON.parse(body2);
+			res.render('search_result.ejs', { comments: commentsarray });
+		});
+	});
 });
